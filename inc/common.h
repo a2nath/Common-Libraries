@@ -14,7 +14,6 @@
 #endif
 #define OK 0
 
-extern std::string error;
 
 /* find the number of lines in a file */
 inline std::string count_new_lines(std::string filename)
@@ -24,12 +23,6 @@ inline std::string count_new_lines(std::string filename)
 #else
     return "wc -l " + filename;
 #endif
-}
-
-/* display the coresponding output from errno */
-inline std::string strerror()
-{
-    return std::strerror(errno);
 }
 
 /* make a system pipe call, return 0 if success, or -1 */

@@ -46,7 +46,7 @@ namespace Trees
         T* curr = node;
         T* prev = curr;
 
-        for (int i = 1; i < input.size(); ++i)
+        for (unsigned i = 1; i < input.size(); ++i)
         {
             curr->next = new T(input[i]);;
             prev = curr;
@@ -68,7 +68,7 @@ namespace Trees
         node = new T(input[0]);
         T* curr = node;
 
-        for (int i = 1; i < input.size(); ++i)
+        for (unsigned i = 1; i < input.size(); ++i)
         {
             curr->next = new T(input[i]);
             curr = curr->next;
@@ -87,7 +87,7 @@ namespace Trees
 
         std::queue<T*> q;
         node = new T(input[0]);
-        int index = 1;
+        unsigned index = 1;
 
 
         T* curr = node;

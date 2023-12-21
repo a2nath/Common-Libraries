@@ -1,0 +1,143 @@
+/* first attempt at permutation of a list of numbers */
+
+#include <vector>
+#include <map>
+
+/* recursive solution in case std::next_permutation is not enough */
+template<class T = double>
+class Permutation
+{
+    struct Node
+    {
+        /* unique id to identify with */
+        int id;
+
+        /* one of the nums to return */
+        T value;
+
+        /* keep track of the visited permutation */
+        bool visited;
+
+        std::vector<Node*> children;
+
+        ~Node()
+        {
+            for (auto& child : children)
+            {
+                delete child;
+            }
+        }
+        Node(int nodeid, const T& val): id(nodeid++), value(val), visited(false) {}
+        Node(int nodeid) : id(nodeid++), visited(false) {}
+    };
+
+    /* build the tranversal tree */
+    void build(Node* node, std::map<unsigned, T> ptrs)
+    {
+        if (ptrs.find(node->id) != ptrs.end())
+            ptrs.erase(node->id);
+
+        for (auto ite = ptrs.begin(); ite != ptrs.end(); ++ite)
+        {
+            node->children.emplace_back(new Node(ite->first, T));
+
+            build(node->children.back(), ptrs);
+        }
+    }
+
+    void recurse(Node* node, std::vector<T>& output)
+    {
+        int count = 0;
+        if (node->children.size())
+        {
+            for (auto c : node->children)
+            {
+                if (c->visited == false)
+                {
+                    output.emplace_back(c->value);
+
+                    recurse(c, output);
+
+                    if (c->visited == true)
+                        ++count;
+
+                    if (count == node->children.size())
+                        node->visited = true;
+                    return;
+                }
+                else
+                {
+                    ++count;
+
+                    if (count == node->children.size())
+                        node->visited = true;
+                    continue;
+                }
+            }
+
+
+        }
+        else
+        {
+            node->visited = true;
+        }
+
+
+    }
+
+    Node* root;
+    std::map<unsigned, T> us_ptrs;
+public:
+    /* get one of the N factorial of combinations
+       Input: get a vector of nums
+      Output: return size of vector with unique perm, 
+              size = 0 means no more perm left and need
+              to reset the list, size > 0 means output 
+              list is filled a new perm as requested
+    */
+    int get_list(std::vector<T>& output)
+    {
+        recurse(root, output);
+        return output.size();
+    }
+
+    /*  build or update tree of N factorial number of combinations */
+    void build_tree()
+    {
+        build(root, us_ptrs);
+    }
+
+    void reset(std::vector<T>& list)
+    {
+        delete root;
+		us_ptrs.clear();
+
+		int id = 0;
+		for (auto& data : list)
+		{
+			us_ptrs.emplace(id++, data);
+		}		
+		
+		build(root, us_ptrs);  
+    }
+
+    void reset()
+	{
+		std::vector<T> nothing;
+		reset(nothing);
+	}
+    
+	~Permutation()
+    {
+        delete root;
+    }
+
+    Permutation(std::vector<T>& list) : root(nullptr)
+    {
+        int id = 0;
+        for (auto& data : list)
+        {
+            us_ptrs.emplace(id++, data);
+        }
+    }
+};
